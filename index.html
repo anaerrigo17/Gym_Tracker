@@ -50,9 +50,10 @@
     .badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:0;align-items:center;}
     .badge{white-space:nowrap;}
     .badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;}
-    .badge-eq{background:#EEEBE6;color:#6B6560;}
-    .badge-rest{background:#FAEEDA;color:#854F0B;}
-    .badge-muscle{background:#EAF3DE;color:#3B6D11;}
+    .pill{display:inline-block;font-size:11px!important;padding:3px 10px;border-radius:999px;font-weight:500;white-space:nowrap;line-height:1.4;}
+    .pill-muscle{background:#EAF3DE;color:#3B6D11;}
+    .pill-eq{background:#EEEBE6;color:#6B6560;}
+    .pill-timer{background:#E6F1FB;color:#185FA5;border:1px solid #85B7EB;cursor:pointer;font-family:inherit;}
 
     /* Action links */
     .action-links{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;}
@@ -429,10 +430,12 @@ function App(){
       h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}},
         h("div",{style:{flex:1,minWidth:0}},
           h("div",{className:"ex-name"},[ex.name]),
-          h("div",{style:{fontSize:11,padding:"3px 10px",borderRadius:50,background:"#EAF3DE",color:"#3B6D11",fontWeight:500,display:"inline-block",marginBottom:6}},[ex.muscles]),
+          h("div",{style:{marginBottom:6}},
+            h("span",{className:"pill pill-muscle"},[ex.muscles])
+          ),
           h("div",{style:{display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}},
-            h("span",{style:{fontSize:11,padding:"3px 10px",borderRadius:50,background:"#EEEBE6",color:"#6B6560",fontWeight:500,whiteSpace:"nowrap"}},[ex.eq]),
-            h("button",{style:{fontSize:11,padding:"3px 10px",borderRadius:50,background:"#E6F1FB",color:"#185FA5",border:"1px solid #85B7EB",fontWeight:500,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"},onClick:()=>setTimer({seconds:ex.restSecs})},["⏱ "+ex.rest])
+            h("span",{className:"pill pill-eq"},[ex.eq]),
+            h("button",{className:"pill pill-timer",onClick:()=>setTimer({seconds:ex.restSecs})},["⏱ "+ex.rest])
           )
         ),
         h("div",{className:"ex-sets-label",style:{flexShrink:0}},[ex.sets])
