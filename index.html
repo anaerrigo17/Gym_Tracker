@@ -494,7 +494,7 @@ function App(){
   }
 
   return h("div",{},
-    timer&&h(Timer,{seconds:timer.seconds,onClose:()=>setTimer(null)}),
+    timer&&Timer({seconds:timer.seconds,onClose:()=>setTimer(null)}),
     // Selectors
     h("div",{className:"selectors"},
       h("div",{className:"week-bar"},
