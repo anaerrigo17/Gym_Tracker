@@ -9,110 +9,158 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
   <meta name="apple-mobile-web-app-title" content="Gym Tracker"/>
   <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:system-ui,-apple-system,sans-serif;background:#f7f7f7;padding:12px;max-width:680px;margin:0 auto}
-    button{font-family:inherit}
-    input[type=number]{font-family:inherit}
-    input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;background:#f7f7f7;}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;padding:12px;max-width:680px;margin:0 auto;font-size:15px;}
+    button{font-family:inherit;cursor:pointer;}
+    input{font-family:inherit;}
+    input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+    input[type=number]{-moz-appearance:textfield;}
+
+    /* Week selector */
+    .week-bar{display:flex;border:1px solid #e0e0e0;border-radius:10px;overflow:hidden;margin-bottom:0;}
+    .week-btn{flex:1;padding:8px 0;font-size:14px;border:none;background:transparent;color:#999;font-weight:400;transition:background .15s,color .15s;}
+    .week-btn.active-a{background:#EEEDFE;color:#534AB7;font-weight:600;}
+    .week-btn.active-b{background:#E1F5EE;color:#0F6E56;font-weight:600;}
+
+    /* Day selector */
+    .day-bar{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;}
+    .day-bar::-webkit-scrollbar{display:none;}
+    .day-btn{flex-shrink:0;padding:7px 16px;font-size:13px;border:1px solid #e0e0e0;border-radius:10px;background:transparent;color:#999;font-weight:400;white-space:nowrap;}
+    .day-btn.active{border-color:#bbb;background:#f0f0f0;color:#111;font-weight:600;}
+
+    /* Card */
+    .card{background:#fff;border:1px solid #e8e8e8;border-radius:14px;overflow:hidden;margin-top:14px;}
+    .card-title{padding:14px 16px;border-bottom:1px solid #f0f0f0;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+    .card-title-text{font-size:17px;font-weight:700;color:#111;}
+    .card-subtitle{font-size:13px;color:#999;}
+    .tip-bar{padding:11px 16px;border-bottom:1px solid #f0f0f0;font-size:13px;line-height:1.5;}
+
+    /* Floor header */
+    .floor-hdr{padding:7px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5F5E5A;background:#F1EFE8;border-bottom:1px solid #ece9e0;border-top:1px solid #ece9e0;}
+
+    /* Exercise row */
+    .ex-row{padding:13px 16px;border-bottom:1px solid #f5f5f5;}
+    .ex-name{font-size:15px;font-weight:700;color:#111;margin-bottom:7px;}
+    .ex-sets-label{font-size:13px;color:#666;font-weight:500;white-space:nowrap;}
+
+    /* Badges */
+    .badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:0;}
+    .badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;}
+    .badge-eq{background:#E6F1FB;color:#185FA5;}
+    .badge-rest{background:#FAEEDA;color:#854F0B;}
+    .badge-muscle{background:#EAF3DE;color:#3B6D11;}
+
+    /* Action links */
+    .action-links{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;}
+    .action-link{font-size:13px;color:#4a7fcb;background:none;border:none;padding:0;font-weight:500;}
+    .action-link.timer-link{color:#854F0B;}
+    .action-link.log-link-active{color:#0F6E56;}
+
+    /* Guide */
+    .guide-box{margin-top:10px;background:#f9f9f9;border-radius:10px;padding:11px 13px;}
+    .guide-step{display:flex;gap:8px;margin-bottom:5px;font-size:13px;color:#555;line-height:1.5;}
+    .guide-step:last-child{margin-bottom:0;}
+    .guide-num{font-weight:700;color:#333;min-width:18px;}
+
+    /* Log section */
+    .log-section{margin-top:12px;}
+    .set-count-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+    .set-count-label{font-size:13px;color:#666;font-weight:500;}
+    .count-btn{width:28px;height:28px;border:1px solid #ddd;border-radius:8px;background:#f5f5f5;font-size:16px;display:flex;align-items:center;justify-content:center;line-height:1;}
+    .count-val{font-size:14px;font-weight:700;min-width:18px;text-align:center;color:#111;}
+
+    /* Set rows */
+    .set-headers{display:grid;grid-template-columns:52px 1fr 1fr;gap:8px;margin-bottom:5px;}
+    .set-header-cell{font-size:11px;color:#bbb;font-weight:500;}
+    .set-row{display:grid;grid-template-columns:52px 1fr 1fr;gap:8px;align-items:center;margin-bottom:6px;}
+    .set-label{font-size:13px;color:#999;font-weight:500;}
+    .set-input{width:100%;font-size:14px;padding:8px 10px;border:1px solid #e0e0e0;border-radius:10px;outline:none;background:#fafafa;color:#111;text-align:center;}
+    .set-input:focus{border-color:#534AB7;background:#fff;}
+
+    /* Buttons */
+    .btn-primary{display:inline-block;padding:9px 18px;font-size:14px;font-weight:600;border-radius:10px;border:1px solid;cursor:pointer;margin-top:10px;}
+    .btn-secondary{display:inline-block;padding:9px 18px;font-size:14px;font-weight:500;border-radius:10px;border:1px solid #ddd;background:#f5f5f5;color:#555;cursor:pointer;margin-top:10px;}
+
+    /* History */
+    .history-section{margin-top:14px;}
+    .history-title{font-size:12px;font-weight:700;color:#333;margin-bottom:7px;}
+    .history-card{margin-bottom:8px;padding:9px 11px;background:#f9f9f9;border-radius:10px;border:1px solid #eee;}
+    .history-card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+    .history-date{font-size:12px;font-weight:700;color:#555;}
+    .history-edit{font-size:12px;color:#4a7fcb;background:none;border:none;padding:0;font-weight:500;}
+    .history-set{display:flex;gap:12px;font-size:12px;color:#666;padding:2px 0;}
+    .history-set-label{color:#bbb;min-width:42px;}
+
+    /* Warmup */
+    .warmup-toggle{width:100%;padding:11px 16px;display:flex;justify-content:space-between;align-items:center;background:#FFF8F0;border:none;border-bottom:1px solid #f0f0f0;}
+    .warmup-title{font-size:14px;font-weight:700;color:#A0522D;}
+    .warmup-arrow{font-size:13px;color:#A0522D;font-weight:500;}
+    .warmup-list{padding:4px 16px 12px;}
+    .warmup-item{padding:8px 0;border-bottom:1px solid #f5f5f5;}
+    .warmup-item:last-child{border-bottom:none;}
+    .warmup-item-hdr{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:3px;}
+    .warmup-item-name{font-size:14px;font-weight:600;color:#111;}
+    .warmup-item-dur{font-size:11px;color:#A0522D;background:#FFF8F0;padding:2px 8px;border-radius:20px;white-space:nowrap;font-weight:500;}
+    .warmup-item-cue{font-size:12px;color:#777;line-height:1.5;}
+
+    /* Timer overlay */
+    .timer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:1000;}
+    .timer-card{background:#fff;border-radius:22px;padding:30px 36px;min-width:240px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.18);}
+    .timer-label{font-size:12px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:18px;}
+    .timer-svg{margin-bottom:10px;}
+    .timer-remaining{font-size:12px;color:#bbb;margin-bottom:22px;}
+    .timer-btns{display:flex;gap:10px;justify-content:center;}
+    .timer-btn-secondary{padding:8px 20px;font-size:14px;border-radius:10px;border:1px solid #ddd;background:#f5f5f5;color:#555;font-weight:500;}
+    .timer-btn-primary{padding:8px 20px;font-size:14px;border-radius:10px;border:1px solid;font-weight:700;}
+
+    /* Selectors row */
+    .selectors{display:flex;flex-direction:column;gap:10px;margin-bottom:0;}
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script>
-// ── Minimal React-like runtime ──────────────────────────────────────────────
-(function(){
-  const _states=[], _effects=[];
-  let _idx=0, _rendering=false, _pending=false;
+// ── Tiny reactive runtime ───────────────────────────────────────────────────
+const _S=[],_E=[];let _idx=0,_dirty=false,_rootFn,_rootEl;
+function useState(init){
+  const i=_idx++;
+  if(_S[i]===undefined)_S[i]=typeof init==='function'?init():init;
+  return[_S[i],v=>{_S[i]=typeof v==='function'?v(_S[i]):v;_schedule();}];
+}
+function useEffect(fn,deps){
+  const i=_idx++;const prev=_E[i];
+  const changed=!prev||!deps||deps.some((d,j)=>d!==prev.deps[j]);
+  if(changed){if(prev?.cleanup)prev.cleanup();_E[i]={deps,cleanup:null};setTimeout(()=>{const c=fn();if(typeof c==='function')_E[i].cleanup=c;},0);}
+}
+function useRef(init){const i=_idx++;if(_S[i]===undefined)_S[i]={current:init};return _S[i];}
+function _schedule(){if(_dirty)return;_dirty=true;setTimeout(()=>{_dirty=false;_idx=0;_patch(_rootEl,_rootFn());},0);}
+function mount(fn,el){_rootFn=fn;_rootEl=el;_idx=0;_patch(el,fn());}
 
-  function useState(init){
-    const i=_idx++;
-    if(_states[i]===undefined) _states[i]=typeof init==='function'?init():init;
-    const setter=v=>{
-      _states[i]=typeof v==='function'?v(_states[i]):v;
-      scheduleRender();
-    };
-    return[_states[i],setter];
-  }
+// ── VDOM ───────────────────────────────────────────────────────────────────
+function h(tag,props,...kids){return{tag,props:props||{},kids:kids.flat(99).filter(k=>k!=null&&k!==false)};}
+function _patch(el,vdom){el.innerHTML='';(Array.isArray(vdom)?vdom:[vdom]).forEach(v=>el.appendChild(_create(v)));}
+function _create(v){
+  if(v==null||v===false)return document.createTextNode('');
+  if(typeof v==='string'||typeof v==='number')return document.createTextNode(String(v));
+  const el=document.createElement(v.tag);
+  Object.entries(v.props||{}).forEach(([k,val])=>{
+    if(k==='style'&&typeof val==='object')Object.assign(el.style,val);
+    else if(k.startsWith('on'))el.addEventListener(k.slice(2).toLowerCase(),val);
+    else if(k==='className')el.className=val;
+    else if((k==='value'||k==='checked')&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA')){el[k]=val??'';}
+    else if(k==='placeholder')el.placeholder=val;
+    else if(k==='type')el.type=val;
+    else if(k==='disabled')el.disabled=!!val;
+    else{try{el.setAttribute(k,val);}catch(e){}}
+  });
+  v.kids.forEach(k=>el.appendChild(_create(k)));
+  return el;
+}
 
-  function useEffect(fn,deps){
-    const i=_idx++;
-    const prev=_effects[i];
-    const changed=!prev||!deps||deps.some((d,j)=>d!==prev.deps[j]);
-    if(changed){
-      if(prev&&prev.cleanup) prev.cleanup();
-      _effects[i]={deps,cleanup:null};
-      setTimeout(()=>{const c=fn();if(typeof c==='function')_effects[i].cleanup=c;},0);
-    }
-  }
-
-  function useCallback(fn){return fn;}
-
-  let _rootFn, _rootEl;
-  function scheduleRender(){
-    if(_pending) return;
-    _pending=true;
-    setTimeout(()=>{_pending=false;doRender();},0);
-  }
-
-  function doRender(){
-    _idx=0;
-    const vdom=_rootFn();
-    patch(_rootEl, vdom);
-  }
-
-  // ── VDOM ──
-  function h(tag,props,...children){
-    return{tag,props:props||{},children:children.flat(Infinity).filter(c=>c!=null&&c!==false&&c!==undefined)};
-  }
-
-  function patch(container, vdom){
-    container.innerHTML='';
-    if(Array.isArray(vdom)) vdom.forEach(v=>container.appendChild(create(v)));
-    else container.appendChild(create(vdom));
-  }
-
-  function create(vnode){
-    if(typeof vnode==='string'||typeof vnode==='number'){
-      return document.createTextNode(String(vnode));
-    }
-    if(!vnode||!vnode.tag) return document.createTextNode('');
-    const el=document.createElement(vnode.tag);
-    applyProps(el,vnode.props);
-    vnode.children.forEach(c=>el.appendChild(create(c)));
-    return el;
-  }
-
-  function applyProps(el,props){
-    Object.entries(props||{}).forEach(([k,v])=>{
-      if(k==='style'&&typeof v==='object'){
-        Object.assign(el.style,v);
-      } else if(k.startsWith('on')&&typeof v==='function'){
-        el.addEventListener(k.slice(2).toLowerCase(),v);
-      } else if(k==='className'){
-        el.className=v;
-      } else if(k==='value'&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA')){
-        el.value=v??'';
-      } else if(k==='placeholder'){
-        el.placeholder=v;
-      } else if(k==='type'){
-        el.type=v;
-      } else if(k==='disabled'){
-        el.disabled=v;
-      } else {
-        try{el.setAttribute(k,v);}catch(e){}
-      }
-    });
-  }
-
-  window._h=h;
-  window._useState=useState;
-  window._useEffect=useEffect;
-  window._useCallback=useCallback;
-  window._mount=function(fn,el){_rootFn=fn;_rootEl=el;doRender();};
-})();
-
-// ── Data ────────────────────────────────────────────────────────────────────
+// ── Data ───────────────────────────────────────────────────────────────────
 const WARMUPS=[
   {label:"Mon",exercises:[
     {name:"Arm circles",duration:"30 s each direction",cue:"Big slow circles, gradually increase range. Loosens shoulder capsule."},
@@ -154,336 +202,341 @@ const WARMUPS=[
 const DAYS=[
   {label:"Mon",title:"Upper body — push",tip:"Keep shoulder blades retracted throughout. Rest 60s on compounds, 45s on isolation.",
     A:{floors:[{name:"Free weights floor",exercises:[
-      {name:"Dumbbell bench press",sets:"4 × 12",rest:"60 s",muscles:"Chest, front delts, triceps",eq:"DB + bench",guide:["Lie flat, DBs at chest height, elbows at ~45°.","Press up until arms extended but not locked out.","Lower slowly over 2s. Keep wrists stacked over elbows."]},
-      {name:"Dumbbell incline press",sets:"3 × 12",rest:"60 s",muscles:"Upper chest, front delts, triceps",eq:"DB + bench",guide:["Bench at 30–40°. Same grip as flat press.","Incline shifts emphasis to upper chest — don't go too steep.","Control the descent. Pause briefly at the bottom."]},
-      {name:"Dumbbell lateral raise",sets:"3 × 15",rest:"45 s",muscles:"Side delts",eq:"DB",guide:["Slight forward lean, soft knees.","Raise arms to shoulder height, leading with elbows.","Lower slowly. Go lighter than you think."]},
-      {name:"Dumbbell overhead press",sets:"3 × 12",rest:"60 s",muscles:"Shoulders, triceps, upper traps",eq:"DB",guide:["Seated or standing. DBs at shoulder height.","Press up, bringing DBs slightly together at top.","Core braced — don't arch lower back."]},
-      {name:"Overhead tricep extension",sets:"3 × 15",rest:"45 s",muscles:"Triceps (long head)",eq:"DB",guide:["Hold one DB with both hands overhead.","Bend at elbows only, lower behind head.","Keep elbows pointing forward — don't let them flare."]},
+      {name:"Dumbbell bench press",sets:"4 × 12",rest:"60 s",restSecs:60,muscles:"Chest, front delts, triceps",eq:"DB + bench",guide:["Lie flat, DBs at chest height, elbows at ~45°.","Press up until arms extended but not locked out.","Lower slowly over 2s. Keep wrists stacked over elbows."]},
+      {name:"Dumbbell incline press",sets:"3 × 12",rest:"60 s",restSecs:60,muscles:"Upper chest, front delts, triceps",eq:"DB + bench",guide:["Bench at 30–40°. Same grip as flat press.","Incline shifts emphasis to upper chest — don't go too steep.","Control the descent. Pause briefly at the bottom."]},
+      {name:"Dumbbell lateral raise",sets:"3 × 15",rest:"45 s",restSecs:45,muscles:"Side delts",eq:"DB",guide:["Slight forward lean, soft knees.","Raise arms to shoulder height, leading with elbows.","Lower slowly. Go lighter than you think."]},
+      {name:"Dumbbell overhead press",sets:"3 × 12",rest:"60 s",restSecs:60,muscles:"Shoulders, triceps, upper traps",eq:"DB",guide:["Seated or standing. DBs at shoulder height.","Press up, bringing DBs slightly together at top.","Core braced — don't arch lower back."]},
+      {name:"Overhead tricep extension",sets:"3 × 15",rest:"45 s",restSecs:45,muscles:"Triceps (long head)",eq:"DB",guide:["Hold one DB with both hands overhead.","Bend at elbows only, lower behind head.","Keep elbows pointing forward — don't let them flare."]},
     ]}]},
     B:{floors:[{name:"Free weights floor",exercises:[
-      {name:"Dumbbell chest fly",sets:"4 × 12",rest:"60 s",muscles:"Chest (stretch-focused), front delts",eq:"DB + bench",guide:["Flat bench, slight bend in elbows — maintain throughout.","Open arms wide until you feel the chest stretch.","Squeeze to bring DBs back together at the top."]},
-      {name:"Dumbbell Arnold press",sets:"3 × 12",rest:"60 s",muscles:"Shoulders (all heads), triceps",eq:"DB",guide:["Start with DBs at chin, palms facing you.","Rotate palms outward as you press up.","Reverse rotation on the way down. Go slowly."]},
-      {name:"Dumbbell front raise",sets:"3 × 12",rest:"45 s",muscles:"Front delts",eq:"DB",guide:["Alternate arms, raising to shoulder height.","Slight elbow bend. Don't swing.","Lower slowly — the eccentric phase matters."]},
-      {name:"Dumbbell lateral raise",sets:"3 × 15",rest:"45 s",muscles:"Side delts",eq:"DB",guide:["Same as Week A.","On your final set, do a drop set — go to failure, drop the weight, continue."]},
-      {name:"Dumbbell skull crusher",sets:"3 × 12",rest:"45 s",muscles:"Triceps",eq:"DB + bench",guide:["Flat bench, DBs above head, palms facing each other.","Hinge only at elbows, lower toward temples.","Keep upper arms vertical throughout."]},
+      {name:"Dumbbell chest fly",sets:"4 × 12",rest:"60 s",restSecs:60,muscles:"Chest (stretch-focused), front delts",eq:"DB + bench",guide:["Flat bench, slight bend in elbows — maintain throughout.","Open arms wide until you feel the chest stretch.","Squeeze to bring DBs back together at the top."]},
+      {name:"Dumbbell Arnold press",sets:"3 × 12",rest:"60 s",restSecs:60,muscles:"Shoulders (all heads), triceps",eq:"DB",guide:["Start with DBs at chin, palms facing you.","Rotate palms outward as you press up.","Reverse rotation on the way down. Go slowly."]},
+      {name:"Dumbbell front raise",sets:"3 × 12",rest:"45 s",restSecs:45,muscles:"Front delts",eq:"DB",guide:["Alternate arms, raising to shoulder height.","Slight elbow bend. Don't swing.","Lower slowly — the eccentric phase matters."]},
+      {name:"Dumbbell lateral raise",sets:"3 × 15",rest:"45 s",restSecs:45,muscles:"Side delts",eq:"DB",guide:["Same as Week A.","On your final set, do a drop set — go to failure, drop the weight, continue."]},
+      {name:"Dumbbell skull crusher",sets:"3 × 12",rest:"45 s",restSecs:45,muscles:"Triceps",eq:"DB + bench",guide:["Flat bench, DBs above head, palms facing each other.","Hinge only at elbows, lower toward temples.","Keep upper arms vertical throughout."]},
     ]}]},
   },
   {label:"Tue",title:"Lower body — quad focus",tip:"Start with your barbell compound, then move to machines. 90s rest after squats.",
     A:{floors:[
       {name:"Free weights floor",exercises:[
-        {name:"Barbell back squat",sets:"4 × 10",rest:"90 s",muscles:"Quads, glutes, hamstrings, core",eq:"Squat rack",guide:["Bar on upper traps, feet shoulder-width, toes slightly out.","Brace core, squat until thighs parallel to floor.","Drive through heels to stand. Chest up, knees track over toes."]},
-        {name:"Dumbbell walking lunge",sets:"3 × 12/leg",rest:"60 s",muscles:"Quads, glutes, hamstrings",eq:"DB",guide:["DBs at sides. Step forward, back knee toward (not on) floor.","Front shin vertical. Drive off front heel.","Keep torso upright. Don't let front knee cave inward."]},
+        {name:"Barbell back squat",sets:"4 × 10",rest:"90 s",restSecs:90,muscles:"Quads, glutes, hamstrings, core",eq:"Squat rack",guide:["Bar on upper traps, feet shoulder-width, toes slightly out.","Brace core, squat until thighs parallel to floor.","Drive through heels to stand. Chest up, knees track over toes."]},
+        {name:"Dumbbell walking lunge",sets:"3 × 12/leg",rest:"60 s",restSecs:60,muscles:"Quads, glutes, hamstrings",eq:"DB",guide:["DBs at sides. Step forward, back knee toward (not on) floor.","Front shin vertical. Drive off front heel.","Keep torso upright. Don't let front knee cave inward."]},
       ]},
       {name:"Machine floor",exercises:[
-        {name:"Leg press",sets:"4 × 12",rest:"60 s",muscles:"Quads, glutes, hamstrings",eq:"Machine",guide:["Feet shoulder-width, mid-plate. Lower until knees ~90°.","Don't let lower back peel off the pad.","Don't lock out knees at top. Keep tension throughout."]},
-        {name:"Cable sumo squat",sets:"3 × 12",rest:"60 s",muscles:"Inner thighs, glutes, quads",eq:"Cable",guide:["Low pulley, stand wide, toes out 45°. Hold handle with both hands.","Squat down, chest up, knees pushing out over toes.","Drive through heels to stand."]},
-        {name:"Adductor machine",sets:"3 × 15",rest:"45 s",muscles:"Inner thighs (adductors)",eq:"Machine",guide:["Sit tall, back on pad, legs wide.","Squeeze legs together slowly. Hold at the closed position.","Open slowly — control both directions."]},
+        {name:"Leg press",sets:"4 × 12",rest:"60 s",restSecs:60,muscles:"Quads, glutes, hamstrings",eq:"Machine",guide:["Feet shoulder-width, mid-plate. Lower until knees ~90°.","Don't let lower back peel off the pad.","Don't lock out knees at top. Keep tension throughout."]},
+        {name:"Cable sumo squat",sets:"3 × 12",rest:"60 s",restSecs:60,muscles:"Inner thighs, glutes, quads",eq:"Cable",guide:["Low pulley, stand wide, toes out 45°. Hold handle with both hands.","Squat down, chest up, knees pushing out over toes.","Drive through heels to stand."]},
+        {name:"Adductor machine",sets:"3 × 15",rest:"45 s",restSecs:45,muscles:"Inner thighs (adductors)",eq:"Machine",guide:["Sit tall, back on pad, legs wide.","Squeeze legs together slowly. Hold at the closed position.","Open slowly — control both directions."]},
       ]},
     ]},
     B:{floors:[
       {name:"Free weights floor",exercises:[
-        {name:"Barbell front squat",sets:"4 × 8",rest:"90 s",muscles:"Quads (emphasis), core, upper back",eq:"Squat rack",guide:["Bar on front of shoulders. Stay very upright.","Squat deep, drive knees out.","Go lighter than you think."]},
-        {name:"Dumbbell step-up",sets:"3 × 12/leg",rest:"60 s",muscles:"Quads, glutes",eq:"DB + bench",guide:["One foot fully on bench. Drive through that heel to step up.","Stand tall at top. Lower trailing leg slowly.","Complete all reps one leg before switching."]},
+        {name:"Barbell front squat",sets:"4 × 8",rest:"90 s",restSecs:90,muscles:"Quads (emphasis), core, upper back",eq:"Squat rack",guide:["Bar on front of shoulders. Stay very upright.","Squat deep, drive knees out.","Go lighter than you think."]},
+        {name:"Dumbbell step-up",sets:"3 × 12/leg",rest:"60 s",restSecs:60,muscles:"Quads, glutes",eq:"DB + bench",guide:["One foot fully on bench. Drive through that heel to step up.","Stand tall at top. Lower trailing leg slowly.","Complete all reps one leg before switching."]},
       ]},
       {name:"Machine floor",exercises:[
-        {name:"Leg press — narrow stance",sets:"4 × 12",rest:"60 s",muscles:"Outer quads, glutes",eq:"Machine",guide:["Feet closer together, still mid-plate.","Narrower stance shifts emphasis to outer quad sweep.","Same rules as regular leg press."]},
-        {name:"Cable squat to row",sets:"3 × 12",rest:"60 s",muscles:"Quads, glutes, upper back, biceps",eq:"Cable",guide:["Low pulley, face cable, hold handle with both hands.","Squat down as cable counterbalances you.","As you stand, row handle to chest, elbows driving back."]},
-        {name:"Adductor machine",sets:"3 × 15",rest:"45 s",muscles:"Inner thighs (adductors)",eq:"Machine",guide:["Same as Week A. Try increasing weight slightly if on second week."]},
+        {name:"Leg press — narrow stance",sets:"4 × 12",rest:"60 s",restSecs:60,muscles:"Outer quads, glutes",eq:"Machine",guide:["Feet closer together, still mid-plate.","Narrower stance shifts emphasis to outer quad sweep.","Same rules as regular leg press."]},
+        {name:"Cable squat to row",sets:"3 × 12",rest:"60 s",restSecs:60,muscles:"Quads, glutes, upper back, biceps",eq:"Cable",guide:["Low pulley, face cable, hold handle with both hands.","Squat down as cable counterbalances you.","As you stand, row handle to chest, elbows driving back."]},
+        {name:"Adductor machine",sets:"3 × 15",rest:"45 s",restSecs:45,muscles:"Inner thighs (adductors)",eq:"Machine",guide:["Same as Week A. Try increasing weight slightly if on second week."]},
       ]},
     ]},
   },
   {label:"Wed",title:"Upper body — pull",tip:"Drive through your elbows on every row. Full stretch at the bottom of each pull.",
     A:{floors:[
       {name:"Machine floor",exercises:[
-        {name:"Lat pulldown (wide grip)",sets:"4 × 12",rest:"60 s",muscles:"Lats, biceps, rear delts",eq:"Cable machine",guide:["Wide overhand grip. Pull bar to upper chest, lead with elbows.","Lean back slightly.","Let bar rise fully — lats stretch at the top."]},
-        {name:"Seated low row",sets:"4 × 12",rest:"60 s",muscles:"Mid-back, lats, biceps",eq:"Cable machine",guide:["Sit upright, neutral grip. Row to lower sternum, elbows hugging sides.","Squeeze shoulder blades at end.","Extend arms fully on return."]},
-        {name:"Single-arm cable row",sets:"3 × 12/side",rest:"45 s",muscles:"Lats, mid-back, biceps",eq:"Cable",guide:["Mid-height cable. Row elbow back past your hip.","Let torso rotate slightly toward cable at bottom for greater ROM.","Control the return fully."]},
-        {name:"Cable face pull",sets:"3 × 15",rest:"45 s",muscles:"Rear delts, rotator cuff, upper traps",eq:"Cable",guide:["High pulley, rope attachment. Pull to face, hands splitting at ear level.","Elbows finish above shoulder height.","Go light — this is a shoulder health exercise."]},
+        {name:"Lat pulldown (wide grip)",sets:"4 × 12",rest:"60 s",restSecs:60,muscles:"Lats, biceps, rear delts",eq:"Cable machine",guide:["Wide overhand grip. Pull bar to upper chest, lead with elbows.","Lean back slightly.","Let bar rise fully — lats stretch at the top."]},
+        {name:"Seated low row",sets:"4 × 12",rest:"60 s",restSecs:60,muscles:"Mid-back, lats, biceps",eq:"Cable machine",guide:["Sit upright, neutral grip. Row to lower sternum, elbows hugging sides.","Squeeze shoulder blades at end.","Extend arms fully on return."]},
+        {name:"Single-arm cable row",sets:"3 × 12/side",rest:"45 s",restSecs:45,muscles:"Lats, mid-back, biceps",eq:"Cable",guide:["Mid-height cable. Row elbow back past your hip.","Let torso rotate slightly toward cable at bottom for greater ROM.","Control the return fully."]},
+        {name:"Cable face pull",sets:"3 × 15",rest:"45 s",restSecs:45,muscles:"Rear delts, rotator cuff, upper traps",eq:"Cable",guide:["High pulley, rope attachment. Pull to face, hands splitting at ear level.","Elbows finish above shoulder height.","Go light — this is a shoulder health exercise."]},
       ]},
       {name:"Free weights floor",exercises:[
-        {name:"Dumbbell bent-over row",sets:"3 × 12",rest:"60 s",muscles:"Lats, mid-back, biceps",eq:"DB + bench",guide:["One knee and hand on bench. Back flat and parallel to floor.","Row DB from hanging to your hip, elbow driving back.","Don't rotate torso to pull."]},
-        {name:"Dumbbell bicep curl",sets:"3 × 15",rest:"45 s",muscles:"Biceps, forearms",eq:"DB",guide:["Alternate arms. Supinate wrist as you curl (rotate palm upward).","Full range — arm fully extended at start.","Lower slowly. No swinging."]},
+        {name:"Dumbbell bent-over row",sets:"3 × 12",rest:"60 s",restSecs:60,muscles:"Lats, mid-back, biceps",eq:"DB + bench",guide:["One knee and hand on bench. Back flat and parallel to floor.","Row DB from hanging to your hip, elbow driving back.","Don't rotate torso to pull."]},
+        {name:"Dumbbell bicep curl",sets:"3 × 15",rest:"45 s",restSecs:45,muscles:"Biceps, forearms",eq:"DB",guide:["Alternate arms. Supinate wrist as you curl (rotate palm upward).","Full range — arm fully extended at start.","Lower slowly. No swinging."]},
       ]},
     ]},
     B:{floors:[
       {name:"Machine floor",exercises:[
-        {name:"Lat pulldown (close grip)",sets:"4 × 12",rest:"60 s",muscles:"Lats (inner), biceps",eq:"Cable machine",guide:["Neutral/close grip handle. Pull to chin level.","Close grip hits inner/lower lat differently to wide grip.","Same rules: lead with elbows, full stretch at top."]},
-        {name:"Seated low row — wide grip",sets:"4 × 12",rest:"60 s",muscles:"Upper back, rear delts, traps",eq:"Cable machine",guide:["Wide bar attachment. Row to lower chest. Elbows flare slightly.","Shifts work to upper back.","Squeeze hard at finish. Pause before releasing."]},
-        {name:"Cable straight-arm pulldown",sets:"3 × 15",rest:"45 s",muscles:"Lats",eq:"Cable",guide:["High pulley, straight bar. Stand back, arms extended above.","Pull bar down in an arc keeping arms straight to thighs.","Return slowly — the stretch is where lats grow."]},
-        {name:"Cable rear delt fly",sets:"3 × 15",rest:"45 s",muscles:"Rear delts, upper back",eq:"Cable",guide:["Two high cables, cross arms and grab opposite handle.","Pull outward and slightly down in a reverse fly motion.","Slight elbow bend. Squeeze rear delts at end."]},
+        {name:"Lat pulldown (close grip)",sets:"4 × 12",rest:"60 s",restSecs:60,muscles:"Lats (inner), biceps",eq:"Cable machine",guide:["Neutral/close grip handle. Pull to chin level.","Close grip hits inner/lower lat differently to wide grip.","Same rules: lead with elbows, full stretch at top."]},
+        {name:"Seated low row — wide grip",sets:"4 × 12",rest:"60 s",restSecs:60,muscles:"Upper back, rear delts, traps",eq:"Cable machine",guide:["Wide bar attachment. Row to lower chest. Elbows flare slightly.","Shifts work to upper back.","Squeeze hard at finish. Pause before releasing."]},
+        {name:"Cable straight-arm pulldown",sets:"3 × 15",rest:"45 s",restSecs:45,muscles:"Lats",eq:"Cable",guide:["High pulley, straight bar. Stand back, arms extended above.","Pull bar down in an arc keeping arms straight to thighs.","Return slowly — the stretch is where lats grow."]},
+        {name:"Cable rear delt fly",sets:"3 × 15",rest:"45 s",restSecs:45,muscles:"Rear delts, upper back",eq:"Cable",guide:["Two high cables, cross arms and grab opposite handle.","Pull outward and slightly down in a reverse fly motion.","Slight elbow bend. Squeeze rear delts at end."]},
       ]},
       {name:"Free weights floor",exercises:[
-        {name:"Dumbbell chest-supported row",sets:"3 × 12",rest:"60 s",muscles:"Mid-back, lats, rear delts",eq:"DB + bench",guide:["Bench at 30–45°. Lie chest-down, DBs hanging below.","Row both DBs simultaneously to hips, elbows driving back.","Chest support eliminates momentum — pure back work."]},
-        {name:"Dumbbell hammer curl",sets:"3 × 15",rest:"45 s",muscles:"Biceps, brachialis, forearms",eq:"DB",guide:["Neutral grip (palms facing each other) throughout.","Curl both arms or alternate. Lower all the way down each rep.","Full extension matters."]},
+        {name:"Dumbbell chest-supported row",sets:"3 × 12",rest:"60 s",restSecs:60,muscles:"Mid-back, lats, rear delts",eq:"DB + bench",guide:["Bench at 30–45°. Lie chest-down, DBs hanging below.","Row both DBs simultaneously to hips, elbows driving back.","Chest support eliminates momentum — pure back work."]},
+        {name:"Dumbbell hammer curl",sets:"3 × 15",rest:"45 s",restSecs:45,muscles:"Biceps, brachialis, forearms",eq:"DB",guide:["Neutral grip (palms facing each other) throughout.","Curl both arms or alternate. Lower all the way down each rep.","Full extension matters."]},
       ]},
     ]},
   },
   {label:"Thu",title:"Lower body — glute & hamstring focus",tip:"Hip hinge is key today. Think: push hips back, not bend knees. Squeeze hard at top of every hip thrust.",
     A:{floors:[
       {name:"Free weights floor",exercises:[
-        {name:"Barbell Romanian deadlift",sets:"4 × 10",rest:"90 s",muscles:"Hamstrings, glutes, lower back",eq:"Squat rack",guide:["Bar at hip height. Hinge at hips, pushing them back as bar slides down legs.","Soft bend in knees. Feel the hamstring stretch.","Drive hips forward to return. Squeeze glutes hard at top."]},
-        {name:"Dumbbell sumo squat",sets:"3 × 12",rest:"60 s",muscles:"Inner thighs, glutes, quads",eq:"DB",guide:["Hold one DB vertically with both hands. Wide stance, toes out 45°.","Squat straight down, chest up, knees pushing out.","Drive through heels. Squeeze glutes at top."]},
-        {name:"Dumbbell hip thrust",sets:"4 × 12",rest:"60 s",muscles:"Glutes (primary), hamstrings",eq:"DB + bench",guide:["Upper back on bench edge. DB on hips — hold in place.","Feet flat, hip-width. Lower hips, then drive up explosively.","Full hip extension at top. Squeeze for 1 second. Don't hyperextend lower back."]},
+        {name:"Barbell Romanian deadlift",sets:"4 × 10",rest:"90 s",restSecs:90,muscles:"Hamstrings, glutes, lower back",eq:"Squat rack",guide:["Bar at hip height. Hinge at hips, pushing them back as bar slides down legs.","Soft bend in knees. Feel the hamstring stretch.","Drive hips forward to return. Squeeze glutes hard at top."]},
+        {name:"Dumbbell sumo squat",sets:"3 × 12",rest:"60 s",restSecs:60,muscles:"Inner thighs, glutes, quads",eq:"DB",guide:["Hold one DB vertically with both hands. Wide stance, toes out 45°.","Squat straight down, chest up, knees pushing out.","Drive through heels. Squeeze glutes at top."]},
+        {name:"Dumbbell hip thrust",sets:"4 × 12",rest:"60 s",restSecs:60,muscles:"Glutes (primary), hamstrings",eq:"DB + bench",guide:["Upper back on bench edge. DB on hips — hold in place.","Feet flat, hip-width. Lower hips, then drive up explosively.","Full hip extension at top. Squeeze for 1 second. Don't hyperextend lower back."]},
       ]},
       {name:"Machine floor",exercises:[
-        {name:"Cable pull-through",sets:"3 × 15",rest:"45 s",muscles:"Glutes, hamstrings",eq:"Cable",guide:["Low pulley, rope attachment. Stand facing away, rope between legs.","Hinge forward at hips, letting rope pull back through legs.","Drive hips forward to stand — hip hinge, not a squat."]},
-        {name:"Abductor machine",sets:"3 × 15",rest:"45 s",muscles:"Outer glutes, hip abductors",eq:"Machine",guide:["Sit tall. Push legs outward as wide as comfortable.","Return slowly — the controlled closing is where the muscle works.","Don't let it slam shut."]},
+        {name:"Cable pull-through",sets:"3 × 15",rest:"45 s",restSecs:45,muscles:"Glutes, hamstrings",eq:"Cable",guide:["Low pulley, rope attachment. Stand facing away, rope between legs.","Hinge forward at hips, letting rope pull back through legs.","Drive hips forward to stand — hip hinge, not a squat."]},
+        {name:"Abductor machine",sets:"3 × 15",rest:"45 s",restSecs:45,muscles:"Outer glutes, hip abductors",eq:"Machine",guide:["Sit tall. Push legs outward as wide as comfortable.","Return slowly — the controlled closing is where the muscle works.","Don't let it slam shut."]},
       ]},
     ]},
     B:{floors:[
       {name:"Free weights floor",exercises:[
-        {name:"Barbell hip thrust",sets:"4 × 12",rest:"90 s",muscles:"Glutes (primary), hamstrings",eq:"Squat rack + bench",guide:["Upper back on bench. Bar in crease of hips — use a pad for comfort.","Feet flat, hip-width. Lower hips, drive up powerfully.","Full hip extension at top. Chin tucked slightly."]},
-        {name:"Bulgarian split squat",sets:"3 × 10/leg",rest:"75 s",muscles:"Glutes, quads, hamstrings",eq:"DB + bench",guide:["Rear foot elevated on bench, laces down. Hold DBs at sides.","Lower back knee toward floor. Lean forward slightly at hips.","Drive through front heel to stand. This will burn — that's good."]},
-        {name:"Dumbbell Romanian deadlift",sets:"3 × 12",rest:"60 s",muscles:"Hamstrings, glutes",eq:"DB",guide:["Single-leg variation: hold one DB, hinge on one leg while the other floats behind.","Keep hips square. Feel the hamstring of the standing leg stretch deeply.","Return to standing slowly. Use rack for balance if needed."]},
+        {name:"Barbell hip thrust",sets:"4 × 12",rest:"90 s",restSecs:90,muscles:"Glutes (primary), hamstrings",eq:"Squat rack + bench",guide:["Upper back on bench. Bar in crease of hips — use a pad for comfort.","Feet flat, hip-width. Lower hips, drive up powerfully.","Full hip extension at top. Chin tucked slightly."]},
+        {name:"Bulgarian split squat",sets:"3 × 10/leg",rest:"75 s",restSecs:75,muscles:"Glutes, quads, hamstrings",eq:"DB + bench",guide:["Rear foot elevated on bench, laces down. Hold DBs at sides.","Lower back knee toward floor. Lean forward slightly at hips.","Drive through front heel to stand. This will burn — that's good."]},
+        {name:"Dumbbell Romanian deadlift",sets:"3 × 12",rest:"60 s",restSecs:60,muscles:"Hamstrings, glutes",eq:"DB",guide:["Single-leg variation: hold one DB, hinge on one leg while the other floats behind.","Keep hips square. Feel the hamstring of the standing leg stretch deeply.","Return to standing slowly. Use rack for balance if needed."]},
       ]},
       {name:"Machine floor",exercises:[
-        {name:"Cable kickback",sets:"3 × 15/leg",rest:"45 s",muscles:"Glutes",eq:"Cable",guide:["Ankle attachment, low pulley. Hinge slightly forward, hold machine for support.","Kick attached leg straight back, squeezing glute hard at top.","Don't swing — small and controlled. Isolation, not momentum."]},
-        {name:"Abductor machine",sets:"3 × 15",rest:"45 s",muscles:"Outer glutes, hip abductors",eq:"Machine",guide:["Same as Week A. Try pausing 2 seconds at the widest point."]},
+        {name:"Cable kickback",sets:"3 × 15/leg",rest:"45 s",restSecs:45,muscles:"Glutes",eq:"Cable",guide:["Ankle attachment, low pulley. Hinge slightly forward, hold machine for support.","Kick attached leg straight back, squeezing glute hard at top.","Don't swing — small and controlled. Isolation, not momentum."]},
+        {name:"Abductor machine",sets:"3 × 15",rest:"45 s",restSecs:45,muscles:"Outer glutes, hip abductors",eq:"Machine",guide:["Same as Week A. Try pausing 2 seconds at the widest point."]},
       ]},
     ]},
   },
   {label:"Fri",title:"Full body — metabolic",tip:"Keep rest to 30–45s today. You should feel slightly breathless between sets. This is your cardio.",
     A:{floors:[
       {name:"Free weights floor",exercises:[
-        {name:"Dumbbell thrusters",sets:"4 × 15",rest:"45 s",muscles:"Quads, glutes, shoulders, triceps",eq:"DB",guide:["Hold DBs at shoulder height. Squat down (full depth).","As you stand, press DBs overhead in one fluid motion.","Lower DBs back to shoulders as you descend into next squat."]},
-        {name:"Dumbbell renegade row",sets:"3 × 10/side",rest:"45 s",muscles:"Back, biceps, core (anti-rotation)",eq:"DB",guide:["Plank position, one hand on each DB. Feet wide for stability.","Row one DB to your hip while the other arm stays planted.","Don't rotate your hips — staying still is the core challenge."]},
-        {name:"Dumbbell reverse lunge to curl",sets:"3 × 10/leg",rest:"45 s",muscles:"Quads, glutes, hamstrings, biceps",eq:"DB",guide:["Hold DBs at sides. Step back into reverse lunge, back knee toward floor.","As you drive back to standing, curl both DBs simultaneously.","Complete all reps one side before switching."]},
+        {name:"Dumbbell thrusters",sets:"4 × 15",rest:"45 s",restSecs:45,muscles:"Quads, glutes, shoulders, triceps",eq:"DB",guide:["Hold DBs at shoulder height. Squat down (full depth).","As you stand, press DBs overhead in one fluid motion.","Lower DBs back to shoulders as you descend into next squat."]},
+        {name:"Dumbbell renegade row",sets:"3 × 10/side",rest:"45 s",restSecs:45,muscles:"Back, biceps, core (anti-rotation)",eq:"DB",guide:["Plank position, one hand on each DB. Feet wide for stability.","Row one DB to your hip while the other arm stays planted.","Don't rotate your hips — staying still is the core challenge."]},
+        {name:"Dumbbell reverse lunge to curl",sets:"3 × 10/leg",rest:"45 s",restSecs:45,muscles:"Quads, glutes, hamstrings, biceps",eq:"DB",guide:["Hold DBs at sides. Step back into reverse lunge, back knee toward floor.","As you drive back to standing, curl both DBs simultaneously.","Complete all reps one side before switching."]},
       ]},
       {name:"Machine floor",exercises:[
-        {name:"Cable woodchop (high to low)",sets:"3 × 12/side",rest:"30 s",muscles:"Obliques, core, shoulders",eq:"Cable",guide:["High pulley, single handle, stand side-on.","Pull handle diagonally across body from high to low, rotating through torso.","Arms relatively straight — rotation comes from core, not arms."]},
-        {name:"Cable woodchop (low to high)",sets:"3 × 12/side",rest:"30 s",muscles:"Obliques, core, shoulders",eq:"Cable",guide:["Low pulley, same side-on stance.","Pull diagonally from low to high (opposite shoulder).","Same rule: rotate through the core."]},
-        {name:"Leg press — high rep burnout",sets:"3 × 20",rest:"45 s",muscles:"Quads, glutes, hamstrings",eq:"Machine",guide:["About 60% of your normal leg press weight.","Pump out 20 reps with controlled form. No locking out.","Embrace the burn."]},
+        {name:"Cable woodchop (high to low)",sets:"3 × 12/side",rest:"30 s",restSecs:30,muscles:"Obliques, core, shoulders",eq:"Cable",guide:["High pulley, single handle, stand side-on.","Pull handle diagonally across body from high to low, rotating through torso.","Arms relatively straight — rotation comes from core, not arms."]},
+        {name:"Cable woodchop (low to high)",sets:"3 × 12/side",rest:"30 s",restSecs:30,muscles:"Obliques, core, shoulders",eq:"Cable",guide:["Low pulley, same side-on stance.","Pull diagonally from low to high (opposite shoulder).","Same rule: rotate through the core."]},
+        {name:"Leg press — high rep burnout",sets:"3 × 20",rest:"45 s",restSecs:45,muscles:"Quads, glutes, hamstrings",eq:"Machine",guide:["About 60% of your normal leg press weight.","Pump out 20 reps with controlled form. No locking out.","Embrace the burn."]},
       ]},
     ]},
     B:{floors:[
       {name:"Free weights floor",exercises:[
-        {name:"Dumbbell clean and press",sets:"4 × 10",rest:"45 s",muscles:"Full body — power movement",eq:"DB",guide:["Hold DBs at thighs. Explosively pull to shoulder height, then press overhead.","Two phases: the clean (to shoulders) and the press (overhead).","Lower with control — keep form clean as you fatigue."]},
-        {name:"Dumbbell snatch",sets:"3 × 8/side",rest:"45 s",muscles:"Full body — glutes, hamstrings, shoulders",eq:"DB",guide:["Hold one DB between feet in a squat position. Explode up, pulling DB overhead in one motion.","Think: jump, shrug, punch up. DB should feel weightless at top.","Lower carefully. Start light — this is a skill."]},
-        {name:"Dumbbell step-up to press",sets:"3 × 10/leg",rest:"45 s",muscles:"Quads, glutes, shoulders",eq:"DB + bench",guide:["One foot on bench. Drive up through that heel.","At the top, press both DBs overhead.","Lower DBs as you step back down."]},
+        {name:"Dumbbell clean and press",sets:"4 × 10",rest:"45 s",restSecs:45,muscles:"Full body — power movement",eq:"DB",guide:["Hold DBs at thighs. Explosively pull to shoulder height, then press overhead.","Two phases: the clean (to shoulders) and the press (overhead).","Lower with control — keep form clean as you fatigue."]},
+        {name:"Dumbbell snatch",sets:"3 × 8/side",rest:"45 s",restSecs:45,muscles:"Full body — glutes, hamstrings, shoulders",eq:"DB",guide:["Hold one DB between feet in a squat position. Explode up, pulling DB overhead in one motion.","Think: jump, shrug, punch up. DB should feel weightless at top.","Lower carefully. Start light — this is a skill."]},
+        {name:"Dumbbell step-up to press",sets:"3 × 10/leg",rest:"45 s",restSecs:45,muscles:"Quads, glutes, shoulders",eq:"DB + bench",guide:["One foot on bench. Drive up through that heel.","At the top, press both DBs overhead.","Lower DBs as you step back down."]},
       ]},
       {name:"Machine floor",exercises:[
-        {name:"Cable pallof press",sets:"3 × 12/side",rest:"30 s",muscles:"Core (anti-rotation), obliques",eq:"Cable",guide:["Mid-height cable, single handle. Stand side-on, feet shoulder-width.","Press handle straight out — cable tries to pull you toward it. Resist that.","Hold for a beat fully extended, return to chest. Zero torso rotation."]},
-        {name:"Lat pulldown — light, fast",sets:"3 × 20",rest:"20 s",muscles:"Lats, biceps",eq:"Cable machine",guide:["About 50% of your normal weight. Pull fast but controlled.","20 reps, then rest only 20 seconds.","This is a metabolic finisher — embrace the burn."]},
-        {name:"Leg press — light, fast",sets:"3 × 20",rest:"45 s",muscles:"Quads, glutes",eq:"Machine",guide:["Light weight, 20 reps, explosive push, slow lower.","Try a slightly different foot position than Week A."]},
+        {name:"Cable pallof press",sets:"3 × 12/side",rest:"30 s",restSecs:30,muscles:"Core (anti-rotation), obliques",eq:"Cable",guide:["Mid-height cable, single handle. Stand side-on, feet shoulder-width.","Press handle straight out — cable tries to pull you toward it. Resist that.","Hold for a beat fully extended, return to chest. Zero torso rotation."]},
+        {name:"Lat pulldown — light, fast",sets:"3 × 20",rest:"20 s",restSecs:20,muscles:"Lats, biceps",eq:"Cable machine",guide:["About 50% of your normal weight. Pull fast but controlled.","20 reps, then rest only 20 seconds.","This is a metabolic finisher — embrace the burn."]},
+        {name:"Leg press — light, fast",sets:"3 × 20",rest:"45 s",restSecs:45,muscles:"Quads, glutes",eq:"Machine",guide:["Light weight, 20 reps, explosive push, slow lower.","Try a slightly different foot position than Week A."]},
       ]},
     ]},
   },
 ];
 
-const STORAGE_KEY="gym_log_v2";
-function parseSetCount(s){const m=s.match(/^(\d+)/);return m?parseInt(m[1]):3;}
-function logKey(w,d,f,e){return w+"_"+d+"_"+f+"_"+e;}
-function emptyRows(n){return Array.from({length:n},()=>({weight:"",reps:""}));}
-function loadLog(){try{const r=localStorage.getItem(STORAGE_KEY);return r?JSON.parse(r):{}}catch{return {};}}
-function saveLog(l){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(l));}catch{}}
+const SK="gym_log_v3";
+function psc(s){const m=s.match(/^(\d+)/);return m?parseInt(m[1]):3;}
+function lk(w,d,f,e){return w+"_"+d+"_"+f+"_"+e;}
+function er(n){return Array.from({length:n},()=>({weight:"",reps:""}));}
+function loadLog(){try{const r=localStorage.getItem(SK);return r?JSON.parse(r):{}}catch{return{};}}
+function saveLog(l){try{localStorage.setItem(SK,JSON.stringify(l));}catch{}}
 
-// ── App ──────────────────────────────────────────────────────────────────────
-const h=window._h;
-const useState=window._useState;
-const useEffect=window._useEffect;
+// ── Timer ──────────────────────────────────────────────────────────────────
+function Timer({seconds,onClose}){
+  const [rem,setRem]=useState(seconds);
+  const [running,setRunning]=useState(true);
+  const ref=useRef(null);
+  useEffect(()=>{
+    if(running){ref.current=setInterval(()=>setRem(r=>{if(r<=1){clearInterval(ref.current);setRunning(false);return 0;}return r-1;}),1000);}
+    else clearInterval(ref.current);
+    return()=>clearInterval(ref.current);
+  },[running]);
+  const done=rem===0;
+  const pct=rem/seconds;
+  const R=34,circ=2*Math.PI*R;
+  const stroke=done?"#0F6E56":"#534AB7";
+  return h("div",{className:"timer-overlay",onClick:e=>{if(e.target===e.currentTarget)onClose();}},
+    h("div",{className:"timer-card"},
+      h("div",{className:"timer-label"},[done?"✅ Rest complete!":"Rest timer"]),
+      h("div",{className:"timer-svg"},
+        h("svg",{width:96,height:96,viewBox:"0 0 96 96",style:{transform:"rotate(-90deg)"}},
+          h("circle",{cx:48,cy:48,r:R,fill:"none",stroke:"#f0f0f0","stroke-width":7}),
+          h("circle",{cx:48,cy:48,r:R,fill:"none",stroke,
+            "stroke-width":7,"stroke-dasharray":circ,
+            "stroke-dashoffset":circ*(1-pct),"stroke-linecap":"round",
+            style:{transition:"stroke-dashoffset 0.9s linear,stroke 0.3s"}}),
+          h("text",{x:48,y:48,fill:done?"#0F6E56":"#111","text-anchor":"middle","dominant-baseline":"central",
+            style:{transform:"rotate(90deg) translate(0,-96px)",fontSize:"22px",fontWeight:"700",fontFamily:"inherit"}},[String(rem)])
+        )
+      ),
+      h("div",{className:"timer-remaining"},["seconds remaining"]),
+      h("div",{className:"timer-btns"},[
+        !done&&h("button",{className:"timer-btn-secondary",onClick:()=>setRunning(r=>!r)},[running?"Pause":"Resume"]),
+        h("button",{className:"timer-btn-primary",
+          style:{background:done?"#E1F5EE":"#EEEDFE",borderColor:done?"#5DCAA5":"#AFA9EC",color:done?"#0F6E56":"#534AB7"},
+          onClick:onClose},[done?"Done":"Skip"]),
+      ])
+    )
+  );
+}
 
-const C={
-  weekA:{bg:"#EEEDFE",text:"#534AB7",border:"#AFA9EC"},
-  weekB:{bg:"#E1F5EE",text:"#0F6E56",border:"#5DCAA5"},
-  floor:{bg:"#F1EFE8",text:"#5F5E5A"},
-  rest:{bg:"#FAEEDA",text:"#854F0B"},
-  muscle:{bg:"#EAF3DE",text:"#3B6D11"},
-  eq:{bg:"#E6F1FB",text:"#185FA5"},
-};
-
+// ── App ────────────────────────────────────────────────────────────────────
 function App(){
   const [week,setWeek]=useState("A");
   const [dayIdx,setDayIdx]=useState(0);
   const [warmupOpen,setWarmupOpen]=useState(false);
-  const [openGuides,setOpenGuides]=useState({});
-  const [openLog,setOpenLog]=useState({});
+  const [guides,setGuides]=useState({});
+  const [logs,setLogs]=useState({});
   const [log,setLog]=useState(loadLog);
   const [draft,setDraft]=useState({});
   const [editSess,setEditSess]=useState({});
+  const [timer,setTimer]=useState(null);
 
   useEffect(()=>{saveLog(log);},[log]);
 
-  const day=DAYS[dayIdx];
-  const plan=day[week];
-  const warmup=WARMUPS[dayIdx];
-  const wc=week==="A"?C.weekA:C.weekB;
+  const day=DAYS[dayIdx],plan=day[week],warmup=WARMUPS[dayIdx];
+  const wc=week==="A"?{bg:"#EEEDFE",text:"#534AB7",border:"#AFA9EC"}:{bg:"#E1F5EE",text:"#0F6E56",border:"#5DCAA5"};
 
-  function toggleGuide(k){setOpenGuides(p=>({...p,[k]:!p[k]}));}
-  function toggleLog(k,ex){
-    const opening=!openLog[k];
-    setOpenLog(p=>({...p,[k]:opening}));
-    if(opening&&!draft[k]){
-      const n=parseSetCount(ex.sets);
-      setDraft(p=>({...p,[k]:{sets:emptyRows(n),customCount:n}}));
-    }
+  function tg(k){setGuides(p=>({...p,[k]:!p[k]}));}
+  function tl(k,ex){
+    const o=!logs[k];setLogs(p=>({...p,[k]:o}));
+    if(o&&!draft[k]){const n=psc(ex.sets);setDraft(p=>({...p,[k]:{sets:er(n),customCount:n}}));}
   }
-  function updateDraftSet(k,si,field,val){
-    setDraft(p=>{
-      const d=p[k]||{sets:[],customCount:0};
-      const sets=d.sets.map((s,i)=>i===si?{...s,[field]:val}:s);
-      return{...p,[k]:{...d,sets}};
-    });
-  }
-  function changeSetCount(k,delta,ex){
-    setDraft(p=>{
-      const d=p[k]||{sets:emptyRows(parseSetCount(ex.sets)),customCount:parseSetCount(ex.sets)};
-      const n=Math.max(1,(d.customCount||d.sets.length)+delta);
-      let sets=[...d.sets];
-      if(n>sets.length) while(sets.length<n) sets.push({weight:"",reps:""});
-      else sets=sets.slice(0,n);
-      return{...p,[k]:{...d,sets,customCount:n}};
-    });
-  }
-  function submitEntry(k){
-    const d=draft[k];
-    if(!d||!d.sets.some(s=>s.weight||s.reps)) return;
+  function uds(k,si,f,v){setDraft(p=>{const d=p[k]||{sets:[],customCount:0};return{...p,[k]:{...d,sets:d.sets.map((s,i)=>i===si?{...s,[f]:v}:s)}};});}
+  function csc(k,delta,ex){setDraft(p=>{
+    const d=p[k]||{sets:er(psc(ex.sets)),customCount:psc(ex.sets)};
+    const n=Math.max(1,(d.customCount||d.sets.length)+delta);
+    let sets=[...d.sets];
+    if(n>sets.length)while(sets.length<n)sets.push({weight:"",reps:""});else sets=sets.slice(0,n);
+    return{...p,[k]:{...d,sets,customCount:n}};
+  });}
+  function submit(k,restSecs){
+    const d=draft[k];if(!d||!d.sets.some(s=>s.weight||s.reps))return;
     const entry={date:new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short"}),sets:d.sets.map(s=>({weight:s.weight,reps:s.reps}))};
-    setLog(prev=>{const updated=[entry,...(prev[k]||[])].slice(0,5);return{...prev,[k]:updated};});
-    setDraft(p=>({...p,[k]:{...d,sets:emptyRows(d.customCount||d.sets.length)}}));
+    setLog(prev=>{const u=[entry,...(prev[k]||[])].slice(0,5);return{...prev,[k]:u};});
+    setDraft(p=>({...p,[k]:{...d,sets:er(d.customCount||d.sets.length)}}));
+    setTimer({seconds:restSecs});
   }
   function startEdit(k,si,session){
     setEditSess(p=>({...p,[k]:si}));
     setDraft(p=>({...p,[k]:{sets:session.sets.map(s=>({weight:s.weight||"",reps:s.reps||""})),customCount:session.sets.length}}));
   }
   function saveEdit(k,si){
-    const d=draft[k]; if(!d) return;
+    const d=draft[k];if(!d)return;
     setLog(prev=>{const arr=[...(prev[k]||[])];arr[si]={...arr[si],sets:d.sets.map(s=>({weight:s.weight,reps:s.reps}))};return{...prev,[k]:arr};});
     setEditSess(p=>({...p,[k]:null}));
-    setDraft(p=>({...p,[k]:{sets:emptyRows(d.customCount),customCount:d.customCount}}));
+    setDraft(p=>({...p,[k]:{sets:er(d.customCount),customCount:d.customCount}}));
   }
   function cancelEdit(k,ex){
     setEditSess(p=>({...p,[k]:null}));
-    const n=parseSetCount(ex.sets);
-    setDraft(p=>({...p,[k]:{sets:emptyRows(n),customCount:n}}));
+    const n=psc(ex.sets);setDraft(p=>({...p,[k]:{sets:er(n),customCount:n}}));
   }
 
-  function badge(bg,color,text){
-    return h("span",{style:{fontSize:11,padding:"2px 7px",borderRadius:6,background:bg,color}},[text]);
-  }
-
-  function renderExercise(ex,fi,ei){
-    const k=logKey(week,dayIdx,fi,ei);
-    const guideOpen=openGuides[k];
-    const logOpen=openLog[k];
+  function exRow(ex,fi,ei){
+    const k=lk(week,dayIdx,fi,ei);
+    const guideOpen=guides[k],logOpen=logs[k];
     const history=log[k]||[];
-    const d=draft[k]||{sets:emptyRows(parseSetCount(ex.sets)),customCount:parseSetCount(ex.sets)};
-    const editIdx=editSess[k]??null;
-    const isEditing=editIdx!==null;
+    const d=draft[k]||{sets:er(psc(ex.sets)),customCount:psc(ex.sets)};
+    const editIdx=editSess[k]??null,isEditing=editIdx!==null;
 
-    return h("div",{style:{padding:"12px 18px",borderBottom:"1px solid #f5f5f5"}},[
-      h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}},[
-        h("div",{style:{flex:1}},[
-          h("div",{style:{fontSize:14,fontWeight:600,color:"#111",marginBottom:6}},[ex.name]),
-          h("div",{style:{display:"flex",gap:5,flexWrap:"wrap"}},[
-            badge(C.eq.bg,C.eq.text,ex.eq),
-            badge(C.rest.bg,C.rest.text,"Rest "+ex.rest),
-            badge(C.muscle.bg,C.muscle.text,ex.muscles),
-          ]),
-        ]),
-        h("div",{style:{fontSize:13,color:"#666",whiteSpace:"nowrap",fontWeight:500}},[ex.sets]),
-      ]),
-      h("div",{style:{display:"flex",gap:12,marginTop:10}},[
-        h("button",{style:{fontSize:12,color:"#4a7fcb",background:"none",border:"none",cursor:"pointer",padding:0},onClick:()=>toggleGuide(k)},[guideOpen?"Hide guide ↑":"How to do it ↓"]),
-        h("button",{style:{fontSize:12,color:history.length>0?C.weekB.text:"#aaa",background:"none",border:"none",cursor:"pointer",padding:0},onClick:()=>toggleLog(k,ex)},[logOpen?"Hide log ↑":"Log sets"+(history.length>0?" ("+history.length+")":"")+" ↓"]),
-      ]),
-      guideOpen&&h("div",{style:{marginTop:10,background:"#f9f9f9",borderRadius:8,padding:"10px 12px"}},
-        ex.guide.map((step,si)=>h("div",{style:{display:"flex",gap:8,marginBottom:si<ex.guide.length-1?6:0,fontSize:12,color:"#555",lineHeight:1.5}},[
-          h("span",{style:{fontWeight:600,color:"#333",minWidth:16}},[(si+1)+". "]),
-          h("span",{},[step]),
-        ]))
+    return h("div",{className:"ex-row"},
+      // Header
+      h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}},
+        h("div",{style:{flex:1}},
+          h("div",{className:"ex-name"},[ex.name]),
+          h("div",{className:"badges"},[
+            h("span",{className:"badge badge-eq"},[ex.eq]),
+            h("span",{className:"badge badge-rest"},["Rest "+ex.rest]),
+            h("span",{className:"badge badge-muscle"},[ex.muscles]),
+          ])
+        ),
+        h("div",{className:"ex-sets-label"},[ex.sets])
       ),
-      logOpen&&h("div",{style:{marginTop:10}},[
-        h("div",{style:{display:"flex",alignItems:"center",gap:8,marginBottom:8}},[
-          h("span",{style:{fontSize:12,color:"#666"}},["Sets:"]),
-          h("button",{style:{width:24,height:24,border:"1px solid #ddd",borderRadius:4,background:"#f5f5f5",cursor:"pointer",fontSize:14},onClick:()=>changeSetCount(k,-1,ex)},["−"]),
-          h("span",{style:{fontSize:13,fontWeight:600,minWidth:16,textAlign:"center"}},[String(d.sets.length)]),
-          h("button",{style:{width:24,height:24,border:"1px solid #ddd",borderRadius:4,background:"#f5f5f5",cursor:"pointer",fontSize:14},onClick:()=>changeSetCount(k,1,ex)},[" + "]),
-        ]),
-        h("div",{style:{display:"flex",flexDirection:"column",gap:6,marginBottom:10}},[
-          h("div",{style:{display:"flex",gap:8}},[
-            h("span",{style:{fontSize:11,color:"#aaa",width:38}},["  "]),
-            h("span",{style:{fontSize:11,color:"#aaa",width:90}},["Weight (kg)"]),
-            h("span",{style:{fontSize:11,color:"#aaa",width:64}},["Reps"]),
-          ]),
-          ...d.sets.map((s,si)=>h("div",{style:{display:"flex",gap:8,alignItems:"center"}},[
-            h("span",{style:{fontSize:12,color:"#999",width:38,flexShrink:0}},["Set "+(si+1)]),
-            h("input",{type:"number",placeholder:"—",value:s.weight,style:{width:90,fontSize:13,padding:"4px 7px",border:"1px solid #ddd",borderRadius:6,outline:"none"},onInput:e=>updateDraftSet(k,si,"weight",e.target.value)},null),
-            h("input",{type:"number",placeholder:"—",value:s.reps,style:{width:64,fontSize:13,padding:"4px 7px",border:"1px solid #ddd",borderRadius:6,outline:"none"},onInput:e=>updateDraftSet(k,si,"reps",e.target.value)},null),
-          ])),
-        ]),
+      // Actions
+      h("div",{className:"action-links"},
+        h("button",{className:"action-link",onClick:()=>tg(k)},[guideOpen?"Hide guide ↑":"How to do it ↓"]),
+        h("button",{className:"action-link"+(history.length>0?" log-link-active":""),onClick:()=>tl(k,ex)},
+          [logOpen?"Hide log ↑":"Log sets"+(history.length>0?" ("+history.length+")":"")+" ↓"]),
+        h("button",{className:"action-link timer-link",onClick:()=>setTimer({seconds:ex.restSecs})},["⏱ "+ex.rest]),
+      ),
+      // Guide
+      guideOpen&&h("div",{className:"guide-box"},
+        ex.guide.map((step,si)=>h("div",{className:"guide-step"},
+          h("span",{className:"guide-num"},[(si+1)+"."]),
+          h("span",{},[step])
+        ))
+      ),
+      // Log
+      logOpen&&h("div",{className:"log-section"},
+        h("div",{className:"set-count-row"},
+          h("span",{className:"set-count-label"},["Sets"]),
+          h("button",{className:"count-btn",onClick:()=>csc(k,-1,ex)},["−"]),
+          h("span",{className:"count-val"},[String(d.sets.length)]),
+          h("button",{className:"count-btn",onClick:()=>csc(k,1,ex)},["+"])
+        ),
+        h("div",{className:"set-headers"},
+          h("div",{className:"set-header-cell"},[""]),
+          h("div",{className:"set-header-cell"},["Weight (kg)"]),
+          h("div",{className:"set-header-cell"},["Reps"])
+        ),
+        ...d.sets.map((s,si)=>h("div",{className:"set-row"},
+          h("span",{className:"set-label"},["Set "+(si+1)]),
+          h("input",{type:"number",placeholder:"—",value:s.weight,className:"set-input",onInput:e=>uds(k,si,"weight",e.target.value)}),
+          h("input",{type:"number",placeholder:"—",value:s.reps,className:"set-input",onInput:e=>uds(k,si,"reps",e.target.value)})
+        )),
         isEditing
-          ?h("div",{style:{display:"flex",gap:8}},[
-              h("button",{style:{fontSize:13,padding:"5px 14px",background:wc.bg,color:wc.text,border:"1px solid "+wc.border,borderRadius:6,cursor:"pointer",fontWeight:500},onClick:()=>saveEdit(k,editIdx)},["Update session"]),
-              h("button",{style:{fontSize:13,padding:"5px 14px",background:"#f5f5f5",color:"#666",border:"1px solid #ddd",borderRadius:6,cursor:"pointer"},onClick:()=>cancelEdit(k,ex)},["Cancel"]),
-            ])
-          :h("button",{style:{fontSize:13,padding:"5px 14px",background:wc.bg,color:wc.text,border:"1px solid "+wc.border,borderRadius:6,cursor:"pointer",fontWeight:500},onClick:()=>submitEntry(k)},["Save session"]),
-        history.length>0&&h("div",{style:{marginTop:12}},[
-          h("div",{style:{fontSize:12,fontWeight:600,color:"#333",marginBottom:6}},["Previous sessions"]),
-          ...history.map((session,hi)=>h("div",{style:{marginBottom:8,padding:"8px 10px",background:"#f9f9f9",borderRadius:8,border:"1px solid #eee"}},[
-            h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}},[
-              h("span",{style:{fontSize:12,fontWeight:600,color:"#555"}},[session.date]),
-              h("button",{style:{fontSize:11,color:"#4a7fcb",background:"none",border:"none",cursor:"pointer",padding:0},onClick:()=>startEdit(k,hi,session)},["Edit"]),
-            ]),
-            ...session.sets.map((s,si)=>h("div",{style:{display:"flex",gap:10,fontSize:12,color:"#666"}},[
-              h("span",{style:{color:"#aaa",minWidth:38}},["Set "+(si+1)]),
+          ?h("div",{style:{display:"flex",gap:8,flexWrap:"wrap"}},
+              h("button",{className:"btn-primary",style:{background:wc.bg,color:wc.text,borderColor:wc.border,marginTop:10},onClick:()=>saveEdit(k,editIdx)},["Update session"]),
+              h("button",{className:"btn-secondary",onClick:()=>cancelEdit(k,ex)},["Cancel"])
+            )
+          :h("button",{className:"btn-primary",style:{background:wc.bg,color:wc.text,borderColor:wc.border},onClick:()=>submit(k,ex.restSecs)},["Save & start rest timer"]),
+        history.length>0&&h("div",{className:"history-section"},
+          h("div",{className:"history-title"},["Previous sessions"]),
+          ...history.map((session,hi)=>h("div",{className:"history-card"},
+            h("div",{className:"history-card-hdr"},
+              h("span",{className:"history-date"},[session.date]),
+              h("button",{className:"history-edit",onClick:()=>startEdit(k,hi,session)},["Edit"])
+            ),
+            ...session.sets.map((s,si)=>h("div",{className:"history-set"},
+              h("span",{className:"history-set-label"},["Set "+(si+1)]),
               s.weight&&h("span",{},[s.weight+" kg"]),
               s.reps&&h("span",{},[s.reps+" reps"]),
-              !s.weight&&!s.reps&&h("span",{style:{color:"#ccc"}},["—"]),
-            ])),
-          ])),
-        ]),
-      ]),
-    ]);
+              !s.weight&&!s.reps&&h("span",{style:{color:"#ccc"}},["—"])
+            ))
+          ))
+        )
+      )
+    );
   }
 
-  return h("div",{style:{padding:"0.5rem 0"}},[
-    // selectors
-    h("div",{style:{display:"flex",gap:8,flexWrap:"wrap",marginBottom:16,alignItems:"center"}},[
-      h("div",{style:{display:"flex",border:"1px solid #e0e0e0",borderRadius:8,overflow:"hidden"}},
-        ["A","B"].map(w=>h("button",{style:{padding:"6px 20px",fontSize:14,border:"none",cursor:"pointer",background:week===w?(w==="A"?C.weekA.bg:C.weekB.bg):"transparent",color:week===w?(w==="A"?C.weekA.text:C.weekB.text):"#888",fontWeight:week===w?600:400},onClick:()=>setWeek(w)},["Week "+w]))
+  return h("div",{},
+    timer&&h(Timer,{seconds:timer.seconds,onClose:()=>setTimer(null)}),
+    // Selectors
+    h("div",{className:"selectors"},
+      h("div",{className:"week-bar"},
+        h("button",{className:"week-btn"+(week==="A"?" active-a":""),onClick:()=>setWeek("A")},["Week A"]),
+        h("button",{className:"week-btn"+(week==="B"?" active-b":""),onClick:()=>setWeek("B")},["Week B"])
       ),
-      h("div",{style:{display:"flex",gap:6,flexWrap:"wrap"}},
-        DAYS.map((d,i)=>h("button",{style:{padding:"5px 14px",fontSize:13,border:"1px solid "+(dayIdx===i?"#bbb":"#e0e0e0"),borderRadius:8,cursor:"pointer",background:dayIdx===i?"#f5f5f5":"transparent",color:dayIdx===i?"#111":"#888",fontWeight:dayIdx===i?600:400},onClick:()=>{setDayIdx(i);setWarmupOpen(false);}},[d.label]))
+      h("div",{className:"day-bar"},
+        DAYS.map((d,i)=>h("button",{className:"day-btn"+(dayIdx===i?" active":""),onClick:()=>{setDayIdx(i);setWarmupOpen(false);}},[ d.label]))
+      )
+    ),
+    // Main card
+    h("div",{className:"card"},
+      h("div",{className:"card-title"},
+        h("span",{className:"card-title-text"},[day.title]),
+        h("span",{className:"card-subtitle"},["~45 min · Week "+week])
       ),
-    ]),
-    h("div",{style:{background:"#fff",border:"1px solid #e8e8e8",borderRadius:12,overflow:"hidden"}},[
-      // title
-      h("div",{style:{padding:"14px 18px",borderBottom:"1px solid #f0f0f0",display:"flex",alignItems:"baseline",gap:10,flexWrap:"wrap"}},[
-        h("span",{style:{fontSize:16,fontWeight:600,color:"#111"}},[day.title]),
-        h("span",{style:{fontSize:13,color:"#888"}},["~45 min · Week "+week]),
-      ]),
-      // tip
-      h("div",{style:{padding:"10px 18px",borderBottom:"1px solid #f0f0f0",fontSize:13,color:C.rest.text,background:C.rest.bg}},[day.tip]),
-      // warmup
-      h("div",{style:{borderBottom:"1px solid #f0f0f0"}},[
-        h("button",{style:{width:"100%",padding:"10px 18px",display:"flex",justifyContent:"space-between",alignItems:"center",background:"#FFF8F0",border:"none",cursor:"pointer"},onClick:()=>setWarmupOpen(p=>!p)},[
-          h("span",{style:{fontSize:13,fontWeight:600,color:"#A0522D"}},["🔥 5-min Warmup"]),
-          h("span",{style:{fontSize:12,color:"#A0522D"}},[warmupOpen?"Hide ↑":"Show ↓"]),
-        ]),
-        warmupOpen&&h("div",{style:{padding:"0 18px 12px"}},
-          warmup.exercises.map((w,wi)=>h("div",{style:{padding:"8px 0",borderBottom:wi<warmup.exercises.length-1?"1px solid #f5f5f5":"none"}},[
-            h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"baseline",gap:8}},[
-              h("span",{style:{fontSize:13,fontWeight:600,color:"#111"}},[w.name]),
-              h("span",{style:{fontSize:11,color:"#A0522D",whiteSpace:"nowrap",background:"#FFF8F0",padding:"1px 7px",borderRadius:5}},[w.duration]),
-            ]),
-            h("div",{style:{fontSize:12,color:"#777",marginTop:3,lineHeight:1.5}},[w.cue]),
-          ]))
-        ),
-      ]),
-      // floors
-      ...plan.floors.map((floor,fi)=>h("div",{},[
-        h("div",{style:{padding:"8px 18px",fontSize:11,fontWeight:600,letterSpacing:"0.05em",textTransform:"uppercase",color:C.floor.text,background:C.floor.bg,borderBottom:"1px solid #f0f0f0"}},[floor.name]),
-        ...floor.exercises.map((ex,ei)=>renderExercise(ex,fi,ei)),
-      ])),
-    ]),
-  ]);
+      h("div",{className:"tip-bar",style:{color:"#854F0B",background:"#FAEEDA"}},[day.tip]),
+      // Warmup
+      h("button",{className:"warmup-toggle",onClick:()=>setWarmupOpen(p=>!p)},
+        h("span",{className:"warmup-title"},["🔥 5-min Warmup"]),
+        h("span",{className:"warmup-arrow"},[warmupOpen?"Hide ↑":"Show ↓"])
+      ),
+      warmupOpen&&h("div",{className:"warmup-list"},
+        warmup.exercises.map(w=>h("div",{className:"warmup-item"},
+          h("div",{className:"warmup-item-hdr"},
+            h("span",{className:"warmup-item-name"},[w.name]),
+            h("span",{className:"warmup-item-dur"},[w.duration])
+          ),
+          h("div",{className:"warmup-item-cue"},[w.cue])
+        ))
+      ),
+      // Floors
+      ...plan.floors.map((floor,fi)=>h("div",{},
+        h("div",{className:"floor-hdr"},[floor.name]),
+        ...floor.exercises.map((ex,ei)=>exRow(ex,fi,ei))
+      ))
+    )
+  );
 }
 
-window._mount(App, document.getElementById("root"));
-
-if("serviceWorker" in navigator){
-  window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));
-}
+mount(App,document.getElementById("root"));
+if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));
 </script>
 </body>
 </html>
