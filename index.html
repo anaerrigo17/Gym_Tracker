@@ -429,14 +429,10 @@ function App(){
       h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}},
         h("div",{style:{flex:1,minWidth:0}},
           h("div",{className:"ex-name"},[ex.name]),
-          // Line 1: muscle badge + timer button
-          h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:6,marginBottom:5}},
-            h("span",{style:{fontSize:11,padding:"2px 8px",borderRadius:20,background:"#EAF3DE",color:"#3B6D11",fontWeight:500,whiteSpace:"nowrap",display:"inline-block"}},[ex.muscles]),
-            h("button",{style:{fontSize:11,padding:"2px 8px",borderRadius:20,background:"#E6F1FB",color:"#185FA5",border:"1px solid #85B7EB",fontWeight:500,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap",flexShrink:0},onClick:()=>setTimer({seconds:ex.restSecs})},["⏱ "+ex.rest])
-          ),
-          // Line 2: equipment badge
-          h("div",{},
-            h("span",{style:{fontSize:11,padding:"2px 8px",borderRadius:20,background:"#EEEBE6",color:"#6B6560",fontWeight:500,whiteSpace:"nowrap",display:"inline-block"}},[ex.eq])
+          h("div",{style:{fontSize:11,padding:"3px 10px",borderRadius:50,background:"#EAF3DE",color:"#3B6D11",fontWeight:500,display:"inline-block",marginBottom:6}},[ex.muscles]),
+          h("div",{style:{display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}},
+            h("span",{style:{fontSize:11,padding:"3px 10px",borderRadius:50,background:"#EEEBE6",color:"#6B6560",fontWeight:500,whiteSpace:"nowrap"}},[ex.eq]),
+            h("button",{style:{fontSize:11,padding:"3px 10px",borderRadius:50,background:"#E6F1FB",color:"#185FA5",border:"1px solid #85B7EB",fontWeight:500,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"},onClick:()=>setTimer({seconds:ex.restSecs})},["⏱ "+ex.rest])
           )
         ),
         h("div",{className:"ex-sets-label",style:{flexShrink:0}},[ex.sets])
