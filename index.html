@@ -431,11 +431,11 @@ function App(){
           h("div",{className:"ex-name"},[ex.name]),
           h("div",{style:{display:"flex",flexDirection:"column",gap:5}},
             h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}},
-              h("span",{className:"badge badge-muscle",style:{flex:1,minWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}},[ex.muscles]),
+              h("span",{style:{fontSize:11,padding:"3px 9px",borderRadius:20,background:"#EAF3DE",color:"#3B6D11",fontWeight:500}},[ex.muscles]),
               h("button",{style:{flexShrink:0,fontSize:11,padding:"3px 9px",borderRadius:20,background:"#E6F1FB",color:"#185FA5",border:"1px solid #85B7EB",fontWeight:500,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"},onClick:()=>setTimer({seconds:ex.restSecs})},["⏱ "+ex.rest])
             ),
-            h("div",{style:{display:"flex",gap:5}},
-              h("span",{className:"badge badge-eq"},[ex.eq])
+            h("div",{},
+              h("span",{style:{fontSize:11,padding:"3px 9px",borderRadius:20,background:"#EEEBE6",color:"#6B6560",fontWeight:500}},[ex.eq])
             )
           )
         ),
