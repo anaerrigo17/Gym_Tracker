@@ -53,7 +53,7 @@
     .pill{display:inline-block;font-size:11px!important;padding:3px 10px;border-radius:999px;font-weight:500;white-space:nowrap;line-height:1.4;}
     .pill-muscle{background:#EAF3DE;color:#3B6D11;}
     .pill-eq{background:#EEEBE6;color:#6B6560;}
-    .pill-timer{background:#E6F1FB;color:#185FA5;border:1px solid #85B7EB;cursor:pointer;font-family:inherit;}
+    .pill-timer{background:#E6F1FB;color:#185FA5;border:none;cursor:pointer;font-family:inherit;}
 
     /* Action links */
     .action-links{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;}
@@ -333,14 +333,15 @@ function Timer({seconds,onClose}){
   const [running,setRunning]=useState(true);
   const ref=useRef(null);
   useEffect(()=>{
-    if(running){ref.current=setInterval(()=>setRem(r=>{if(r<=1){clearInterval(ref.current);setRunning(false);return 0;}return r-1;}),1000);}
+    if(running&&rem>0){ref.current=setInterval(()=>setRem(r=>{if(r<=1){clearInterval(ref.current);setRunning(false);return 0;}return r-1;}),1000);}
     else clearInterval(ref.current);
     return()=>clearInterval(ref.current);
-  },[running]);
+  },[running,rem]);
   const done=rem===0;
   const pct=rem/seconds;
   const R=34,circ=2*Math.PI*R;
   const stroke=done?"#0F6E56":"#534AB7";
+  function restart(){setRem(seconds);setRunning(true);}
   return h("div",{className:"timer-overlay",onClick:e=>{if(e.target===e.currentTarget)onClose();}},
     h("div",{className:"timer-card"},
       h("div",{className:"timer-label"},[done?"✅ Rest complete!":"Rest timer"]),
@@ -358,6 +359,7 @@ function Timer({seconds,onClose}){
       h("div",{className:"timer-remaining"},["seconds remaining"]),
       h("div",{className:"timer-btns"},[
         !done&&h("button",{className:"timer-btn-secondary",onClick:()=>setRunning(r=>!r)},[running?"Pause":"Resume"]),
+        h("button",{className:"timer-btn-secondary",onClick:restart},["↺ Restart"]),
         h("button",{className:"timer-btn-primary",
           style:{background:done?"#E1F5EE":"#EEEDFE",borderColor:done?"#5DCAA5":"#AFA9EC",color:done?"#0F6E56":"#534AB7"},
           onClick:onClose},[done?"Done":"Skip"]),
