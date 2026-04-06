@@ -479,8 +479,7 @@ function App(){
           h("div",{style:{fontSize:11,color:"#bbb",fontWeight:500,marginBottom:5}},["Exercise notes"]),
           h("textarea",{
             placeholder:"e.g. felt strong, grip slipping, increase weight next time...",
-            value:d.notes||"",
-            onBlur:e=>setDraft(p=>({...p,[k]:{...p[k],notes:e.target.value}})),
+            onBlur:e=>setDraft(p=>({...p,[k]:{...(p[k]||{}),notes:e.target.value}})),
             style:{width:"100%",fontSize:13,padding:"8px 10px",border:"1px solid #e0e0e0",borderRadius:10,outline:"none",background:"#fafafa",color:"#111",resize:"none",minHeight:60,fontFamily:"inherit",lineHeight:1.5}
           })
         ),
