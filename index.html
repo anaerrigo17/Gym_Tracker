@@ -396,7 +396,7 @@ function App(){
   });}
   function submit(k,restSecs){
     const d=draft[k];if(!d||!d.sets.some(s=>s.weight||s.reps))return;
-    const entry={date:new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short"}),sets:d.sets.map(s=>({weight:s.weight,reps:s.reps}))};
+    const entry={date:new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short"}),sets:d.sets.map(s=>({weight:s.weight,reps:s.reps})),notes:d.notes||""};
     setLog(prev=>{const u=[entry,...(prev[k]||[])].slice(0,5);return{...prev,[k]:u};});
     setDraft(p=>({...p,[k]:{...d,sets:er(d.customCount||d.sets.length)}}));
     setTimer({seconds:restSecs});
@@ -474,6 +474,16 @@ function App(){
               h("button",{className:"btn-secondary",onClick:()=>cancelEdit(k,ex)},["Cancel"])
             )
           :h("button",{className:"btn-primary",style:{background:wc.bg,color:wc.text,borderColor:wc.border},onClick:()=>submit(k,ex.restSecs)},["Save & start rest timer"]),
+        // Exercise-level notes
+        h("div",{style:{marginTop:10}},
+          h("div",{style:{fontSize:11,color:"#bbb",fontWeight:500,marginBottom:5}},["Exercise notes"]),
+          h("textarea",{
+            placeholder:"e.g. felt strong, grip slipping, increase weight next time...",
+            value:d.notes||"",
+            onBlur:e=>setDraft(p=>({...p,[k]:{...p[k],notes:e.target.value}})),
+            style:{width:"100%",fontSize:13,padding:"8px 10px",border:"1px solid #e0e0e0",borderRadius:10,outline:"none",background:"#fafafa",color:"#111",resize:"none",minHeight:60,fontFamily:"inherit",lineHeight:1.5}
+          })
+        ),
         history.length>0&&h("div",{className:"history-section"},
           h("div",{className:"history-title"},["Previous sessions"]),
           ...history.map((session,hi)=>h("div",{className:"history-card"},
@@ -486,7 +496,8 @@ function App(){
               s.weight&&h("span",{},[s.weight+" kg"]),
               s.reps&&h("span",{},[s.reps+" reps"]),
               !s.weight&&!s.reps&&h("span",{style:{color:"#ccc"}},["—"])
-            ))
+            )),
+            session.notes&&h("div",{style:{fontSize:12,color:"#aaa",fontStyle:"italic",marginTop:4,paddingTop:4,borderTop:"1px solid #f0f0f0"}},["📝 "+session.notes])
           ))
         )
       )
