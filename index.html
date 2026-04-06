@@ -138,7 +138,13 @@ function useEffect(fn,deps){
   if(changed){if(prev?.cleanup)prev.cleanup();_E[i]={deps,cleanup:null};setTimeout(()=>{const c=fn();if(typeof c==='function')_E[i].cleanup=c;},0);}
 }
 function useRef(init){const i=_idx++;if(_S[i]===undefined)_S[i]={current:init};return _S[i];}
-function _schedule(){if(_dirty)return;_dirty=true;setTimeout(()=>{_dirty=false;_idx=0;_patch(_rootEl,_rootFn());},0);}
+function _schedule(){if(_dirty)return;_dirty=true;setTimeout(()=>{_dirty=false;_idx=0;
+  const active=document.activeElement;
+  const activeId=active?active.dataset.uid:null;
+  const activeVal=active?active.value:null;
+  _patch(_rootEl,_rootFn());
+  if(activeId){const el=document.querySelector('[data-uid="'+activeId+'"]');if(el){el.focus();if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){el.value=activeVal;el.setSelectionRange(activeVal.length,activeVal.length);}}}
+},0);}
 function mount(fn,el){_rootFn=fn;_rootEl=el;_idx=0;_patch(el,fn());}
 
 // ── VDOM ───────────────────────────────────────────────────────────────────
@@ -469,8 +475,12 @@ function App(){
         ),
         ...d.sets.map((s,si)=>h("div",{className:"set-row"},
           h("span",{className:"set-label"},["Set "+(si+1)]),
-          h("input",{type:"text",inputmode:"decimal",placeholder:"—",className:"set-input",onBlur:e=>uds(k,si,"weight",e.target.value)}),
-          h("input",{type:"text",inputmode:"numeric",placeholder:"—",className:"set-input",onBlur:e=>uds(k,si,"reps",e.target.value)})
+          h("input",{type:"text",inputmode:"decimal",placeholder:"—",value:s.weight||"",className:"set-input","data-uid":k+"_w_"+si,
+            onInput:e=>uds(k,si,"weight",e.target.value),
+            onFocus:e=>e.target.select()}),
+          h("input",{type:"text",inputmode:"numeric",placeholder:"—",value:s.reps||"",className:"set-input","data-uid":k+"_r_"+si,
+            onInput:e=>uds(k,si,"reps",e.target.value),
+            onFocus:e=>e.target.select()})
         )),
         isEditing
           ?h("div",{style:{display:"flex",gap:8,flexWrap:"wrap"}},
@@ -483,7 +493,8 @@ function App(){
           h("div",{style:{fontSize:11,color:"#bbb",fontWeight:500,marginBottom:5}},["Exercise notes"]),
           h("textarea",{
             placeholder:"e.g. felt strong, grip slipping, increase weight next time...",
-            onBlur:e=>setDraft(p=>({...p,[k]:{...(p[k]||{}),notes:e.target.value}})),
+            "data-uid":k+"_notes",
+            onInput:e=>setDraft(p=>({...p,[k]:{...(p[k]||{}),notes:e.target.value}})),
             style:{width:"100%",fontSize:13,padding:"8px 10px",border:"1px solid #e0e0e0",borderRadius:10,outline:"none",background:"#fafafa",color:"#111",resize:"none",minHeight:60,fontFamily:"inherit",lineHeight:1.5}
           })
         ),
