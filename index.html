@@ -398,12 +398,11 @@ function App(){
     if(n>sets.length)while(sets.length<n)sets.push({weight:"",reps:""});else sets=sets.slice(0,n);
     return{...p,[k]:{...d,sets,customCount:n}};
   });}
-  function submit(k,restSecs){
+  function submit(k){
     const d=draft[k];if(!d||!d.sets.some(s=>s.weight||s.reps))return;
     const entry={date:new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short"}),sets:d.sets.map(s=>({weight:s.weight,reps:s.reps})),notes:d.notes||""};
     setLog(prev=>{const u=[entry,...(prev[k]||[])].slice(0,5);return{...prev,[k]:u};});
     setDraft(p=>({...p,[k]:{...d,sets:er(d.customCount||d.sets.length)}}));
-    setTimer({seconds:restSecs});
   }
   function startEdit(k,si,session){
     setEditSess(p=>({...p,[k]:si}));
@@ -478,7 +477,7 @@ function App(){
               h("button",{className:"btn-primary",style:{background:wc.bg,color:wc.text,borderColor:wc.border,marginTop:10},onClick:()=>saveEdit(k,editIdx)},["Update session"]),
               h("button",{className:"btn-secondary",onClick:()=>cancelEdit(k,ex)},["Cancel"])
             )
-          :h("button",{className:"btn-primary",style:{background:wc.bg,color:wc.text,borderColor:wc.border},onClick:()=>submit(k,ex.restSecs)},["Save & start rest timer"]),
+          :h("button",{className:"btn-primary",style:{background:wc.bg,color:wc.text,border:"none",fontSize:11,padding:"3px 10px",borderRadius:999,fontWeight:500,marginTop:10},onClick:()=>submit(k)},["Save"]),
         // Exercise-level notes
         h("div",{style:{marginTop:10}},
           h("div",{style:{fontSize:11,color:"#bbb",fontWeight:500,marginBottom:5}},["Exercise notes"]),
