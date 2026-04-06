@@ -482,12 +482,6 @@ function App(){
             onInput:e=>uds(k,si,"reps",e.target.value),
             onFocus:e=>e.target.select()})
         )),
-        isEditing
-          ?h("div",{style:{display:"flex",gap:8,flexWrap:"wrap"}},
-              h("button",{className:"btn-primary",style:{background:wc.bg,color:wc.text,borderColor:wc.border,marginTop:10},onClick:()=>saveEdit(k,editIdx)},["Update session"]),
-              h("button",{className:"btn-secondary",onClick:()=>cancelEdit(k,ex)},["Cancel"])
-            )
-          :h("button",{className:"btn-primary",style:{background:wc.bg,color:wc.text,border:"none",fontSize:11,padding:"4px 10px",borderRadius:8,fontWeight:500,marginTop:10},onClick:()=>submit(k)},["Save"]),
         // Exercise-level notes
         h("div",{style:{marginTop:10}},
           h("div",{style:{fontSize:11,color:"#bbb",fontWeight:500,marginBottom:5}},["Exercise notes"]),
@@ -499,6 +493,12 @@ function App(){
             style:{width:"100%",fontSize:13,padding:"8px 10px",border:"1px solid #e0e0e0",borderRadius:10,outline:"none",background:"#fafafa",color:"#111",resize:"none",minHeight:60,fontFamily:"inherit",lineHeight:1.5}
           })
         ),
+        isEditing
+          ?h("div",{style:{display:"flex",gap:8,flexWrap:"wrap"}},
+              h("button",{className:"btn-primary",style:{background:wc.bg,color:wc.text,borderColor:wc.border,marginTop:10},onClick:()=>saveEdit(k,editIdx)},["Update session"]),
+              h("button",{className:"btn-secondary",onClick:()=>cancelEdit(k,ex)},["Cancel"])
+            )
+          :h("button",{className:"btn-primary",style:{background:wc.bg,color:wc.text,border:"none",fontSize:11,padding:"4px 10px",borderRadius:8,fontWeight:500,marginTop:10},onClick:()=>submit(k)},["Save"]),
         history.length>0&&h("div",{className:"history-section"},
           h("div",{className:"history-title"},["Previous sessions"]),
           ...history.map((session,hi)=>h("div",{className:"history-card"},
