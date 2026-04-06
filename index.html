@@ -50,7 +50,7 @@
     .badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:0;align-items:flex-start;}
     .badge{white-space:normal;word-break:break-word;}
     .badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;}
-    .badge-eq{background:#E6F1FB;color:#185FA5;}
+    .badge-eq{background:#EEEBE6;color:#6B6560;}
     .badge-rest{background:#FAEEDA;color:#854F0B;}
     .badge-muscle{background:#EAF3DE;color:#3B6D11;}
 
@@ -446,7 +446,6 @@ function App(){
         h("button",{className:"action-link",onClick:()=>tg(k)},[guideOpen?"Hide guide ↑":"How to do it ↓"]),
         h("button",{className:"action-link"+(history.length>0?" log-link-active":""),onClick:()=>tl(k,ex)},
           [logOpen?"Hide log ↑":"Log sets"+(history.length>0?" ("+history.length+")":"")+" ↓"]),
-        h("button",{className:"action-link timer-link",onClick:()=>setTimer({seconds:ex.restSecs})},["⏱ "+ex.rest]),
       ),
       // Guide
       guideOpen&&h("div",{className:"guide-box"},
@@ -526,7 +525,7 @@ function App(){
         h("span",{className:"card-title-text"},[day.title]),
         h("span",{className:"card-subtitle"},["~45 min · Week "+week])
       ),
-      h("div",{className:"tip-bar",style:{color:"#854F0B",background:"#FAEEDA"}},[day.tip]),
+      h("div",{className:"tip-bar",style:{color:"#444441",background:"#E5E2D9",borderBottom:"0.5px solid #ccc9c0"}},[day.tip]),
       // Warmup
       h("button",{className:"warmup-toggle",onClick:()=>setWarmupOpen(p=>!p)},
         h("span",{className:"warmup-title"},["🔥 5-min Warmup"]),
