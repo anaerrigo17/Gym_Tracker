@@ -412,13 +412,13 @@ function App(){
   }
   function startEdit(k,si,session){
     setEditSess(p=>({...p,[k]:si}));
-    setDraft(p=>({...p,[k]:{sets:session.sets.map(s=>({weight:s.weight||"",reps:s.reps||""})),customCount:session.sets.length}}));
+    setDraft(p=>({...p,[k]:{sets:session.sets.map(s=>({weight:s.weight||"",reps:s.reps||""})),customCount:session.sets.length,notes:session.notes||""}}));
   }
   function saveEdit(k,si){
     const d=draft[k];if(!d)return;
-    setLog(prev=>{const arr=[...(prev[k]||[])];arr[si]={...arr[si],sets:d.sets.map(s=>({weight:s.weight,reps:s.reps}))};return{...prev,[k]:arr};});
+    setLog(prev=>{const arr=[...(prev[k]||[])];arr[si]={...arr[si],sets:d.sets.map(s=>({weight:s.weight,reps:s.reps})),notes:d.notes||""};return{...prev,[k]:arr};});
     setEditSess(p=>({...p,[k]:null}));
-    setDraft(p=>({...p,[k]:{sets:er(d.customCount),customCount:d.customCount}}));
+    setDraft(p=>({...p,[k]:{sets:er(d.customCount),customCount:d.customCount,notes:""}}));
   }
   function cancelEdit(k,ex){
     setEditSess(p=>({...p,[k]:null}));
@@ -494,6 +494,7 @@ function App(){
           h("textarea",{
             placeholder:"e.g. felt strong, grip slipping, increase weight next time...",
             "data-uid":k+"_notes",
+            value:d.notes||"",
             onInput:e=>setDraft(p=>({...p,[k]:{...(p[k]||{}),notes:e.target.value}})),
             style:{width:"100%",fontSize:13,padding:"8px 10px",border:"1px solid #e0e0e0",borderRadius:10,outline:"none",background:"#fafafa",color:"#111",resize:"none",minHeight:60,fontFamily:"inherit",lineHeight:1.5}
           })
