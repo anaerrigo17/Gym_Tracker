@@ -431,10 +431,10 @@ function App(){
       h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}},
         h("div",{style:{flex:1,minWidth:0}},
           h("div",{className:"ex-name"},[ex.name]),
-          h("div",{style:{marginBottom:6}},
+          h("div",{style:{marginBottom:5}},
             h("span",{className:"pill pill-muscle"},[ex.muscles])
           ),
-          h("div",{style:{display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}},
+          h("div",{style:{display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}},
             h("span",{className:"pill pill-eq"},[ex.eq]),
             h("button",{className:"pill pill-timer",onClick:()=>setTimer({seconds:ex.restSecs})},["⏱ "+ex.rest])
           )
