@@ -465,8 +465,8 @@ function App(){
         ),
         ...d.sets.map((s,si)=>h("div",{className:"set-row"},
           h("span",{className:"set-label"},["Set "+(si+1)]),
-          h("input",{type:"number",placeholder:"—",value:s.weight,className:"set-input",onInput:e=>uds(k,si,"weight",e.target.value)}),
-          h("input",{type:"number",placeholder:"—",value:s.reps,className:"set-input",onInput:e=>uds(k,si,"reps",e.target.value)})
+          h("input",{type:"text",inputmode:"decimal",placeholder:"—",value:s.weight,className:"set-input",onBlur:e=>uds(k,si,"weight",e.target.value)}),
+          h("input",{type:"text",inputmode:"numeric",placeholder:"—",value:s.reps,className:"set-input",onBlur:e=>uds(k,si,"reps",e.target.value)})
         )),
         isEditing
           ?h("div",{style:{display:"flex",gap:8,flexWrap:"wrap"}},
